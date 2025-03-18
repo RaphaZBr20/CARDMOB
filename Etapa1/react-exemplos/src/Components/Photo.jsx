@@ -8,5 +8,4 @@ const Photo = ( {photo}) => {
         </>
     );
 };
-
-export default Photo; 
+export default Photo;
