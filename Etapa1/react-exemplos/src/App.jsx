@@ -6,6 +6,7 @@ import './App.css'
 import Counter from './components/Counter';
 import Photo from './components/Photo';
 import Album from './components/Album';
+import TodoList from './components/TodoList';
 
 function App() {
   const [count, setCount] = useState(0);
@@ -72,8 +73,9 @@ function App() {
 
   return (
     <>
-      <Counter title="Contador" />
-      <Counter initial="8000" />
+      <TodoList name="CARDMOB" />
+      <Counter title="Contando..." />
+      <Counter initial="100" />
       {/* <article>
         <h1>Album da API</h1>
         {photos.map( (photo) => (
