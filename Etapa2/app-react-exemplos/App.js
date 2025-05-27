@@ -9,6 +9,9 @@ export default function App() {
   return (
     <View style={styles.container}>
       <List />
+      <View style={styles.redbox}></View>
+      <View style={styles.bluebox}></View>
+      <View style={styles.blackbox}></View>
     </View>
   );
 }
@@ -38,6 +41,7 @@ const styles = StyleSheet.create({
   item: {
     flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'column',
     justifyContent: 'space-between',
     marginBottom: 10,
     padding: 10,
@@ -57,5 +61,26 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     borderWidth: 1,
     paddingHorizontal: 10,
+    alignItems: 'center',
+    backgroundColor: 'gray',
+    height: 600,
+    marginTop: 150,
+  },
+  redbox: {
+    width: 100,
+    height: 100,
+    backgroundColor: 'red',
+    borderRadius: 50,
+  },
+  bluebox: {
+    width: 100,
+    height: 100,
+    backgroundColor: 'blue',
+  },
+  blackbox: {
+    width: 100,
+    height: 100,
+    backgroundColor: 'black',
   }
+
 });
