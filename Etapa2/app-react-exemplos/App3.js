@@ -3,43 +3,24 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button, Image, TextInput, FlatList } from 'react-native';
 
 import Inputs from './components/Inputs';
-import ScrollViewExample from './components/ScrollViewExample';
 
 export default function App() {
-
+  
 
   return (
     <View style={styles.container}>
       <Inputs />
-      <ScrollViewExample />
     </View>
   );
 }
 
-@@ -22,25 +19,8 @@ const styles = StyleSheet.create({
+const styles = StyleSheet.create({
+  container: {
     flexDirection: 'column',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: 'gray',
     height: 600,
     marginTop: 150,
-  },
-  redbox: {
-    width: 100,
-    height: 100,
-    backgroundColor: 'red',
-    borderRadius: 50,
-  },
-  bluebox: {
-    width: 100,
-    height: 100,
-    backgroundColor: 'blue',
-  },
-  blackbox: {
-    width: 100,
-    height: 100,
-    backgroundColor: 'black',
   }
-
   
 });
