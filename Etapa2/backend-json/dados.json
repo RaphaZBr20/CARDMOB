@@ -1,4 +1,36 @@
 {
-    "items": [],
-    "pessoas": []
-  }
+  "items": [
+    {
+      "id": "358f",
+      "text": "alguma coisa"
+    },
+    {
+      "id": "86c6",
+      "text": "Vai Tomando"
+    },
+    {
+      "id": "823e",
+      "text": "Só sei que nada sei"
+    },
+    {
+      "id": "0d1b",
+      "text": "Só sei que tudo sei"
+    },
+    {
+      "id": "9c2e",
+      "text": "Alguma coisa do além"
+    },
+    {
+      "id": "bd6f",
+      "text": "Então ele é"
+    }
+  ],
+  "usuarios": [],
+  "compras": [
+    {
+      "id": "ef92",
+      "item": "Xbox One S",
+      "quantidade": 10
+    }
+  ]
+}

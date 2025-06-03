@@ -1,207 +1,144 @@
-import React, { useEffect, useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button, Image, TextInput, FlatList } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, Button, FlatList, StyleSheet } from 'react-native';
 
-// Indicar o endereço do backend.
-const BASE_URL = 'http://10.81.205.34:3000';
+const API_URL = 'http://10.81.205.34:3000/compras';
 
-export default function App() {
-  const [counter, setCounter] = useState(0);
-  // Excluir tudo que tem relação com counter, pois não usar.
-  /// CRUD em memória
-  const [items, setItems] = useState([]);
-  const [text, setText] = useState('');
-  const [editItemId, setEditItemId] = useState(null);
-  const [editItemText, setEditItemText] = useState('');
-  // loading ... efeito de carregando...
-  const [loading, setLoading] = useState(false); // novo
-
-  // Buscar tudo.
-  const fetchItems = async () => {
-    setLoading(true);
-    try {
-      // executa o que precisa, se der erro entra no catch
-      const response = await fetch(`${BASE_URL}/items`);
-      const data = await response.json();
-      console.log(JSON.stringify(data)); // debug
-      setItems(data);
-
-    } catch (error) {
-      // quando ocorre algum erro.
-      console.error('Error fetching items:', error);
-    }
-    finally {
-      setLoading(false);
-    }
-  }
+const App = () => {
+  const [compras, setCompras] = useState([]);
+  const [item, setItem] = useState('');
+  const [quantidade, setQuantidade] = useState('');
+  const [editandoId, setEditandoId] = useState(null);
 
   useEffect(() => {
-    fetchItems()
-  }, [])
+    carregarCompras();
+  }, []);
 
-    // CREATE
-  const addItem = async () => {
-    if (text.trim() === '') {
-      return;
-    }
+  const carregarCompras = async () => {
     try {
-      const response = await fetch(`${BASE_URL}/items`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({text: text.trim()}),
-      });
-      if (response.ok) {
-        await fetchItems();
-        setText('');
-      } 
-      else {
-        console.error('Failed to add item:', response.status);
-      }
+      const response = await fetch(API_URL);
+      const data = await response.json();
+      setCompras(data);
+    } catch (error) {
+      console.error('Erro ao carregar compras:', error);
     }
-    catch (error) {
-      console.error('Error adding item:', error);
-    }
-
-
-    const newItem = {
-      id: Math.random().toString(),
-      text: text.trim()
-    }
-    setItems([...items, newItem]);
-    setText('');
-    console.log(items);
-  }
-
-  // UPDATE
-  const updateItem = async (id) => {
-    try {
-      const response = await fetch(`${BASE_URL}/items/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({text: editItemText}),
-      });
-      if (response.ok) {
-        await fetchItems();
-        setEditItemId(null);
-        setEditItemText('');
-      }
-      else {
-        console.error('Failed to update item:', response.status);
-      }
-    }
-    catch (error) {
-      console 
-    }
-  }
-  // DELETE
-  const deleteItem = (id) => {
-    Alert.alert(
-      'Confirm Delete',
-      'Are you sure want to delete this item ?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          onPress: async () => {
-            try {
-              const response = await fetch(`${BASE_URL}/items${id}`, {
-                method: 'DELETE'
-              });
-              if (response.ok) {
-                await fetchItems();
-              }
-              else {
-                console.error('Failed to delete item', response.status);
-              }
-            }
-            catch (error) {
-              console.error('Error deleting item:', error);
-            }
-          },
-        }
-      ],
-      { cancelable: true }
-    );
   };
-  // READ -> um único item e/ou lista de itens
-  const renderItem = ({item}) => {
-    if (item.id != editItemId) {
-      return (
-        <View style={styles.item}>
-          <Text style={styles.itemText}>{item.text}</Text>
-          <View style={styles.buttons}>
-            <Button title='Edit' onPress={() => {setEditItemId(item.id)}}></Button>
-            <Button title='Delete' onPress={() => {deleteItem(item.id)}}></Button>
-          </View>
-        </View>
-      );
 
-    } else {
-      // Um item esta sendo editado
-      return (
-        <View style={styles.item}>
-          <TextInput 
-            style={styles.editInput}
-            onChangeText={setEditItemText}
-            value={editItemText}
-            autoFocus
-          />
-          <Button title='Update' onPress={() => updateItem(item.id)}></Button>
-        </View>
-      );
+  const adicionarItem = async () => {
+    if (!item || !quantidade) return;
+
+    const novaCompra = {
+      item,
+      quantidade: parseInt(quantidade),
+    };
+
+    try {
+      let response;
+      if (editandoId) {
+        // Atualizar item existente
+        response = await fetch(`${API_URL}/${editandoId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(novaCompra),
+        });
+      } else {
+        // Adicionar novo item
+        response = await fetch(API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(novaCompra),
+        });
+      }
+
+      if (response.ok) {
+        setItem('');
+        setQuantidade('');
+        setEditandoId(null);
+        carregarCompras();
+      }
+    } catch (error) {
+      console.error('Erro ao salvar compra:', error);
     }
-  }
+  };
+
+  const editarItem = (compra) => {
+    setItem(compra.item);
+    setQuantidade(compra.quantidade.toString());
+    setEditandoId(compra.id);
+  };
+
+  const removerItem = async (id) => {
+    try {
+      const response = await fetch(`${API_URL}/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        carregarCompras();
+      }
+    } catch (error) {
+      console.error('Erro ao remover compra:', error);
+    }
+  };
 
   return (
     <View style={styles.container}>
-      <TextInput 
+      <Text style={styles.titulo}>Lista de Compras</Text>
+
+      <TextInput
         style={styles.input}
-        value={text}
-        onChangeText={setText}
-        placeholder='Enter text item'
+        placeholder="Item"
+        value={item}
+        onChangeText={setItem}
       />
-      <Button 
-        title='Add Item'
-        onPress={addItem}
+
+      <TextInput
+        style={styles.input}
+        placeholder="Quantidade"
+        keyboardType="numeric"
+        value={quantidade}
+        onChangeText={setQuantidade}
       />
+
+      <Button
+        title={editandoId ? "Atualizar" : "Adicionar"}
+        onPress={adicionarItem}
+      />
+
       <FlatList
-        data={items}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-        style={styles.list}
-      />
-      <Text style={styles.text}>teste</Text>
-      <Image 
-        source={{uri: "https://picsum.photos/200"}}
-        style={{width: 200, height: 200}}
-      />
+        data={compras}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={styles.item}>
+            <Text style={styles.itemText}>
+              {item.item} - {item.quantidade}
+            </Text>
 
-      <StatusBar style="auto" />
-      {/* <Text style={styles.text}>Counter: {counter}</Text>
-
-      <View style={styles.buttonContainer}>
-        <Button title='Increment' onPress={incrementCounter} />
-        <Button title='Decrement' onPress={decrementCounter} />
-      </View> */}
+            <View style={styles.botoes}>
+              <Button title="Editar" onPress={() => editarItem(item)} />
+              <Button title="Remover" onPress={() => removerItem(item.id)} />
+            </View>
+          </View>
+        )}
+      />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    marginTop: 60,
+    backgroundColor: '#fff',
   },
-  text: {
+  titulo: {
     fontSize: 24,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
   },
   input: {
     height: 40,
@@ -210,30 +147,21 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingHorizontal: 10,
   },
-  list: {
-    marginTop: 20,
-  },
   item: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 10,
+    alignItems: 'center',
     padding: 10,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 5,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
   },
   itemText: {
-    flex: 1,
-    marginRight: 10,
+    fontSize: 16,
   },
-  buttons: {
+  botoes: {
     flexDirection: 'row',
+    gap: 10,
   },
-  editInput: {
-    flex: 1,
-    marginRight: 10,
-    borderColor: 'gray',
-    borderWidth: 1,
-    paddingHorizontal: 10,
-  }
 });
+
+export default App;
