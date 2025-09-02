@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { View, SafeAreaView, TextInput, Button, StyleSheet, Text} from "react-native"
 
-import { fakeLogin } from "../services/authService";
+import { requestLogin } from "../services/authService";
 import { useAuth } from "../contexts/AuthContext";
 
-export default function LoginScreen({ navigation }: any) {
+export default function ({ navigation }: any) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -13,7 +13,7 @@ export default function LoginScreen({ navigation }: any) {
     const handleLogin = async () => {
         try {
             // lógica login / conexão com backend
-            const token = await fakeLogin(email, password);
+            const token = await requestLogin(email, password);
             login(token);
             console.log('Login ok');
         } catch (err: any) {
