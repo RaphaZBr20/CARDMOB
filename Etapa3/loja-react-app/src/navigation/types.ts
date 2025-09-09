@@ -1,7 +1,7 @@
 import { NavigatorScreenParams } from '@react-navigation/native';
 
 export type TabParamList = {
-    Home: undefined,
+    Catalog: undefined,
     Settings: undefined,
     Register: undefined,
 };
@@ -13,7 +13,7 @@ export type RootStackParamList = {
 }
 
 export type AuthTabParamList = {
-    Home: undefined;
+    Catalog: undefined;
     Settings: undefined;
 }
 
