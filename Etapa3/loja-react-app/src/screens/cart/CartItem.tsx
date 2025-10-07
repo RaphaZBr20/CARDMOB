@@ -28,8 +28,8 @@ const CartItem = ({ item }: any) => {
                         <Text style={styles.buttonText}>+</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress={() => handleRemove(item)} style={styles.button}>
-                        <Text style={styles.buttonText}>Remover</Text>
+                    <TouchableOpacity onPress={() => handleRemove(item)} style={styles.removebutton}>
+                        <Text style={styles.removebuttonText}>Remover</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -47,17 +47,40 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderColor: '#ddd',
     },
-    image: {
-        width: '50%',
-        height: 100,
-        borderRadius: 8,
-        borderColor: '#ddd',
+    name: {
+        fontSize: 16,
     },
-    name: {},
-    quantity: {},
-    price: {},
-    button: {},
-    buttonText: {},
-    quantityValue: {},
-
+    quantity: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginVertical: 5,
+    },
+    price: {
+        fontSize: 14,
+        color: '#007BFF',
+    },
+    button: {
+        backgroundColor: '#007BFF',
+        borderRadius: 5,
+        padding: 5,
+        marginHorizontal: 5,
+    },
+    buttonText: {
+        fontSize: 18,
+        color: '#fff',
+    },
+    quantityValue: {
+        marginHorizontal: 10,
+        fontSize: 16,
+    },
+    removeButton: {
+        marginLeft: 10,
+        backgroundColor: '#FF0000',
+        padding: 10,
+        borderRadius: 5,
+    },
+    removeButtonText: {
+        color: '#fff',
+        textAlign: 'center'
+    },
 });
