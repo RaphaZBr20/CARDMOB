@@ -6,7 +6,6 @@ import CartItem from './CartItem';
 import { useShop } from '../../contexts/ShopContext';
 
 const CartScreen = ({ navigation }: any) => {
-    const { cartItems } = useShop();
     const { cartItems, getTotalPrice, clearCart } = useShop();
 
     const renderItem = ({item} : any) => (
@@ -36,10 +35,8 @@ const CartScreen = ({ navigation }: any) => {
                         keyExtractor={(item: any) => item.id.toString()}
                     />
                     <View style={styles.totalContainer}>
-                        <Text style={styles.totalText}>Total R$ {handleCheckout}</Text>
                         <Text style={styles.totalText}>Total R$ {getTotalPrice().toString()}</Text>
                         <TouchableOpacity
-                            onPress={handleCheckout}
                             onPress={clearCart}
                             style={styles.clearButton}
                         >
@@ -53,6 +50,7 @@ const CartScreen = ({ navigation }: any) => {
                         </TouchableOpacity>
                         <TouchableOpacity
                             onPress={() => navigation.navigate('Catalog')}
+                            onPress={() => navigation.navigate('Checkout')}
                             style={styles.checkoutButton}
                         >
                             <Text style={styles.checkoutButtonText}>Concluir Pedido</Text>
