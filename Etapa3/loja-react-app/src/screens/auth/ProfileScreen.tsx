@@ -1,5 +1,3 @@
-import React from "react";
-import { View, Text, Button, StyleSheet } from "react-native";
 import React, { useEffect, useState } from "react"; // modificado
 import { View, Text, Button, StyleSheet, Image } from "react-native"; // modificado
 
@@ -10,14 +8,16 @@ import { requestProfileById } from "../../services/profileService"; // novo
 
 function ProfileScreen({ navigation }: any) {
     const { theme, toggleTheme } = useTheme();
-    const { logout } = useAuth();
+    const { logout, userData } = useAuth();
     const [user, setUser] = useState({}); // novo
 
     // novo
     useEffect(() => {
         const fetchProfile = async () => {
             try {
+                console.log(userData); // novo
                 const user = await requestProfileById(1);
+                const user = await requestProfileById(userData?.id); // correção
                 console.log(user);
                 setUser(user);
                 console.log('Carregou o usuário!');
@@ -59,4 +59,3 @@ const styles = StyleSheet.create({
         width: 100,
     },
     text: { fontSize: 14} // novo
-});
