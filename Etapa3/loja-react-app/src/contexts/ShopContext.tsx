@@ -5,7 +5,14 @@ import * as ImagePicker from 'expo-image-picker';
 type ShopContextType = {
     cartItems: any[];
     addToCart: (item: any) => Promise<void>;
-@@ -14,6 +16,8 @@
+    removeFromCart: (itemId: number) => Promise<void>;
+    getTotalPrice: () => number;
+    clearCart: () => void;
+    lastOrderInfo: (orderInfo: any) => void;
+};
+
+export const ShopContext = createContext<ShopContextType>({} as ShopContextType);
+
 export const ShopProvider: React.FC<{ children: React.ReactNode}> = ({ children}) => {
     const [cartItems, setCartItems] = useState<any[]>([]);
     const [orderInfo, setOrderInfo] = useState<any[]>([]);
@@ -14,12 +21,47 @@ export const ShopProvider: React.FC<{ children: React.ReactNode}> = ({ children}
 
     const addToCart = async (item: any, quantity: number = 1) => {
         setCartItems(prevItems => {
-@@ -55,14 +59,37 @@
+                const existingIndex = prevItems.findIndex(
+                    cartItem => cartItem.id === item.id
+                );
+                if (existingIndex >= 0) {
+                    const updatedItems = [...prevItems];
+                    if (updatedItems[existingIndex].quantity + quantity > 0) {
+                        updatedItems[existingIndex].quantity += quantity;
+                    }
+                    return updatedItems;
+                }
+                else {
+                    return [...prevItems, {...item, quantity}];
+                }
+
+            }
+        )
+    }
+
+    const removeFromCart = (itemId: number) => {
+        setCartItems((prevItems) =>  
+            prevItems.filter(item => item.id !== itemId)
+        );
+    }
+
+    const getTotalPrice = () => {
+        return cartItems.reduce(
+            (total, item) => total + item.price * item.quantity, 0
+        ).toFixed(2);
+    }
+
+    const clearCart = () => {
+        setCartItems([]);
+    }
+
+    const lastOrderInfo = (orderInfo: any) => {
         setOrderInfo(orderInfo);
     }
 
     // Image picker.
     const pickImage = async () => {
+    const pickImage = async (): Promise<string> => {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status === 'granted') {
             let result = await ImagePicker.launchImageLibraryAsync({
@@ -31,6 +73,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode}> = ({ children}
                 const imageUri = result.assets[0].uri;
                 console.log('Image uri', imageUri);
                 setNewImage(imageUri);
+                return Promise.resolve(imageUri);
             }
             else {
                 console.log('A seleção de imagem foi cancelada');
@@ -43,7 +86,6 @@ export const ShopProvider: React.FC<{ children: React.ReactNode}> = ({ children}
 
     return (
         <ShopContext
-            value={ { cartItems, addToCart, removeFromCart, getTotalPrice, clearCart, orderInfo, lastOrderInfo } }
             value={ { cartItems, addToCart, removeFromCart, getTotalPrice, clearCart, orderInfo, lastOrderInfo, editingItem, setEditingItem, newImage, pickImage } }
         >
             {children}
